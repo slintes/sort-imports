@@ -31,9 +31,9 @@ func ParseImport(line string, ownModule string) *MyImport {
 		myImport.Priority = 1
 	} else if strings.Contains(value, ownModule) {
 		myImport.Priority = 5
-	} else if strings.Contains(value, "k8s.io") {
-		myImport.Priority = 4
 	} else if strings.Contains(value, "github.com/openshift") {
+		myImport.Priority = 4
+	} else if strings.Contains(value, "k8s.io") {
 		myImport.Priority = 3
 	} else {
 		myImport.Priority = 2
@@ -59,7 +59,10 @@ func SortImports(myImports []*MyImport) string {
 		}
 		lastType = int(myImport.Priority)
 
-		sortedImports += myImport.BeforeComment
+		if myImport.BeforeComment != "" {
+			sortedImports += "\n"
+			sortedImports += myImport.BeforeComment
+		}
 		sortedImports += myImport.Line + "\n"
 		sortedImports += myImport.AfterComment
 	}

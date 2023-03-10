@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	_ "embed"
 	"flag"
 	"fmt"
 	"io/fs"
@@ -13,13 +14,23 @@ import (
 	"github.com/slintes/sort-imports/files"
 )
 
+//go:generate bash hack/version.sh
+//go:embed version.txt
+var version string
+
 func main() {
 
 	var overwriteFile = flag.Bool("w", false, "overwrite files with sorted imports")
+	var printVersion = flag.Bool("v", false, "overwrite files with sorted imports")
 	flag.Parse()
 
+	if *printVersion {
+		fmt.Println(version)
+		os.Exit(0)
+	}
+
 	if flag.NArg() != 1 {
-		log.Fatal("usage: sort-imports [-w] <project_dir>")
+		log.Fatal("usage: sort-imports [-v] [-w] <project_dir>")
 	}
 
 	root := flag.Arg(0)

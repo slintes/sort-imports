@@ -50,17 +50,21 @@ func SortImports(myImports []*MyImport) string {
 		return myImports[i].Priority < myImports[j].Priority
 	})
 
-	lastType := 0
+	lastPrio := 0
 	sortedImports := ""
 	for i, myImport := range myImports {
 		// add empty line for separation
-		if i > 0 && int(myImport.Priority) > lastType {
+		newLine := false
+		if i > 0 && int(myImport.Priority) > lastPrio {
 			sortedImports += "\n"
+			newLine = true
 		}
-		lastType = int(myImport.Priority)
+		lastPrio = int(myImport.Priority)
 
 		if myImport.BeforeComment != "" {
-			sortedImports += "\n"
+			if !newLine {
+				sortedImports += "\n"
+			}
 			sortedImports += myImport.BeforeComment
 		}
 		sortedImports += myImport.Line + "\n"

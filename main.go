@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"io/fs"
 	"log"
@@ -14,16 +15,14 @@ import (
 
 func main() {
 
-	args := os.Args[1:]
-	if len(args) == 0 || len(args) > 2 || (len(args) == 2 && args[1] != "-w") {
-		log.Fatal("usage: sort-imports <project_dir> [-w]")
-	}
-	root := args[0]
+	var overwriteFile = flag.Bool("w", false, "overwrite files with sorted imports")
+	flag.Parse()
 
-	overwriteFile := false
-	if len(args) == 2 {
-		overwriteFile = true
+	if flag.NArg() != 1 {
+		log.Fatal("usage: sort-imports [-w] <project_dir>")
 	}
+
+	root := flag.Arg(0)
 
 	ownModule, err := getOwnModule(root)
 	if err != nil {
@@ -60,7 +59,7 @@ func main() {
 		// TODO is this thread safe?
 		hasDiff = hasDiff || thisHasDiff
 
-		if overwriteFile {
+		if *overwriteFile {
 			err = myFile.Write()
 			if err != nil {
 				return err
@@ -73,7 +72,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if hasDiff && !overwriteFile {
+	if hasDiff && !*overwriteFile {
 		os.Exit(2)
 	}
 }

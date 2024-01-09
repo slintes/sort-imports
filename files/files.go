@@ -17,6 +17,7 @@ type MyFile struct {
 	UnsortedImports string
 	NewFile         string
 }
+const kubebuilderScaffold="//+kubebuilder:scaffold:imports"
 
 func (f *MyFile) Parse() error {
 	//fmt.Printf("handling %s\n", myFile.Path)
@@ -92,8 +93,13 @@ func (f *MyFile) Parse() error {
 			// handle empty line for comment placing
 			if len(trimmed) == 0 {
 				if len(lastComment) > 0 && lastImport != nil {
-					// attach comment to last import
-					lastImport.AfterComment += lastComment
+					if strings.Contains(lastComment, kubebuilderScaffold) {
+						// keep empty line for kubebuilderScaffold
+						lastImport.AfterComment += "\n" + lastComment
+					} else {
+						// attach comment to last import
+	                                        lastImport.AfterComment += lastComment	
+					}
 					lastComment = ""
 				}
 				continue

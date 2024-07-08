@@ -21,7 +21,7 @@ var version string
 func main() {
 
 	var overwriteFile = flag.Bool("w", false, "overwrite files with sorted imports")
-	var printVersion = flag.Bool("v", false, "overwrite files with sorted imports")
+	var printVersion = flag.Bool("v", false, "print version")
 	flag.Parse()
 
 	if *printVersion {
